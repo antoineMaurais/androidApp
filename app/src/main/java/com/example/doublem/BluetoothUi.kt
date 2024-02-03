@@ -34,14 +34,50 @@ data class Shortcut( val shortcutKey: Int,
                      val releaseModifiers: Boolean = true,) {
 
     companion object {
+        // Touche de base
         const val LEFT_CONTROL: KeyModifier = 0b1
         const val LEFT_ALT: KeyModifier = 0b100
         const val LEFT_GUI: KeyModifier = 0b1000
         const val RIGHT_ALT: KeyModifier = 0b100_0000
         const val RIGHT_GUI: KeyModifier = 0b1000_0000
+        const val MODIFIER_LEFT_GUI: Int = 0x08 // Souvent, la touche Windows gauche est représentée par ce modificateur
+
     }
+
 }
 
+fun charToKeyCode(char: Char): Int {
+    return when (char) {
+        'a' -> KeyEvent.KEYCODE_Q
+        'b' -> KeyEvent.KEYCODE_B
+        'c' -> KeyEvent.KEYCODE_C
+        'd' -> KeyEvent.KEYCODE_D
+        'e' -> KeyEvent.KEYCODE_E
+        'f' -> KeyEvent.KEYCODE_F
+        'g' -> KeyEvent.KEYCODE_G
+        'h' -> KeyEvent.KEYCODE_H
+        'i' -> KeyEvent.KEYCODE_I
+        'j' -> KeyEvent.KEYCODE_J
+        'k' -> KeyEvent.KEYCODE_K
+        'l' -> KeyEvent.KEYCODE_L
+        'm' -> KeyEvent.KEYCODE_SEMICOLON // ';' sur QWERTY
+        'n' -> KeyEvent.KEYCODE_N
+        'o' -> KeyEvent.KEYCODE_O
+        'p' -> KeyEvent.KEYCODE_P
+        'q' -> KeyEvent.KEYCODE_A
+        'r' -> KeyEvent.KEYCODE_R
+        's' -> KeyEvent.KEYCODE_S
+        't' -> KeyEvent.KEYCODE_T
+        'u' -> KeyEvent.KEYCODE_U
+        'v' -> KeyEvent.KEYCODE_V
+        'w' -> KeyEvent.KEYCODE_Z
+        'x' -> KeyEvent.KEYCODE_X
+        'y' -> KeyEvent.KEYCODE_Y
+        'z' -> KeyEvent.KEYCODE_W
+        ' ' -> KeyEvent.KEYCODE_SPACE
+        else -> KeyEvent.KEYCODE_UNKNOWN
+    }
+}
 
 @Composable
 fun BluetoothUiConnection(bluetoothController: BluetoothController) {
@@ -135,22 +171,112 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
 
             Spacer(modifier = Modifier.size(10.dp))
 
+//            Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+//                Button(onClick = {press(Shortcut(KeyEvent.KEYCODE_DPAD_LEFT,listOf(Shortcut.LEFT_ALT, Shortcut.LEFT_GUI)) )}) {
+//                    Text("<- tab")
+//                }
+//                Spacer(modifier = Modifier.size(20.dp))
+//                Button(onClick = {press(Shortcut( KeyEvent.KEYCODE_DPAD_RIGHT,listOf(Shortcut.RIGHT_ALT, Shortcut.RIGHT_GUI)))}) {
+//                    Text("tab ->")
+//                }
+//            }
+//
+//            Spacer(modifier = Modifier.size(10.dp))
+
+//            Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+//                Button(onClick = {press(Shortcut(KeyEvent.KEYCODE_F,listOf(Shortcut.LEFT_CONTROL, Shortcut.LEFT_GUI)))}) {
+//                    Text("full screen")
+//                }
+//            }
+
+
             Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                Button(onClick = {press(Shortcut(KeyEvent.KEYCODE_DPAD_LEFT,listOf(Shortcut.LEFT_ALT, Shortcut.LEFT_GUI)) )}) {
-                    Text("<- tab")
-                }
-                Spacer(modifier = Modifier.size(20.dp))
-                Button(onClick = {press(Shortcut( KeyEvent.KEYCODE_DPAD_RIGHT,listOf(Shortcut.RIGHT_ALT, Shortcut.RIGHT_GUI)))}) {
-                    Text("tab ->")
+                Button(onClick = {
+                    press(Shortcut(KeyEvent.KEYCODE_TAB, listOf(Shortcut.LEFT_ALT)))
+                }) {
+                    Text("ALT TAB")
                 }
             }
 
-            Spacer(modifier = Modifier.size(10.dp))
-
             Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                Button(onClick = {press(Shortcut(KeyEvent.KEYCODE_F,listOf(Shortcut.LEFT_CONTROL, Shortcut.LEFT_GUI)))}) {
-                    Text("full screen")
+                Button(onClick = {
+                    press(Shortcut(KeyEvent.KEYCODE_Q)) // Supposant que KEYCODE_A envoie "a"
+                    press(Shortcut(KeyEvent.KEYCODE_N)) // Supposant que KEYCODE_B envoie "b"
+                    press(Shortcut(KeyEvent.KEYCODE_T))
+                    press(Shortcut(KeyEvent.KEYCODE_O))
+                    press(Shortcut(KeyEvent.KEYCODE_I))
+                    press(Shortcut(KeyEvent.KEYCODE_N))
+                    press(Shortcut(KeyEvent.KEYCODE_E))
+
+                    press(Shortcut(KeyEvent.KEYCODE_SPACE))
+
+                    press(Shortcut(KeyEvent.KEYCODE_L))
+                    press(Shortcut(KeyEvent.KEYCODE_Q))
+
+                    press(Shortcut(KeyEvent.KEYCODE_SPACE))
+
+                    press(Shortcut(KeyEvent.KEYCODE_P))
+                    press(Shortcut(KeyEvent.KEYCODE_E))
+                    press(Shortcut(KeyEvent.KEYCODE_T))
+                    press(Shortcut(KeyEvent.KEYCODE_I))
+                    press(Shortcut(KeyEvent.KEYCODE_T))
+                    press(Shortcut(KeyEvent.KEYCODE_E))
+
+                    press(Shortcut(KeyEvent.KEYCODE_SPACE))
+
+                    press(Shortcut(KeyEvent.KEYCODE_S))
+                    press(Shortcut(KeyEvent.KEYCODE_Q))
+                    press(Shortcut(KeyEvent.KEYCODE_S))
+                    press(Shortcut(KeyEvent.KEYCODE_Q))
+                }) {
+                    Text("???")
                 }
             }
+
+            Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                Button(onClick = {
+                    // Appui sur Ctrl + Echap
+                    press(Shortcut(KeyEvent.KEYCODE_ESCAPE, listOf(Shortcut.LEFT_CONTROL)))
+
+                    // Attendre brièvement pour permettre au menu Démarrer de s'ouvrir
+                    Thread.sleep(100) // 500 millisecondes, ajustez selon les besoins
+
+                    // Étape 2: Taper le nom de l'application
+                    // Remplacez "nomApplication" par le nom réel de votre application
+                    val appName = "league of legends"
+                    appName.forEach { char ->
+                        val keyCode = charToKeyCode(char) // Vous devez implémenter cette fonction
+                        press(Shortcut(keyCode))
+                        Thread.sleep(100) // Un léger délai entre chaque touche
+                    }
+
+                    // Étape 3: Appuyer sur Entrée pour lancer l'application
+                    press(Shortcut(KeyEvent.KEYCODE_ENTER))
+
+                }) {
+                    Text("Lancer : League of legends")
+                }
+            }
+
+            Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                Button(onClick = {
+                    // Appui sur Ctrl + Echap
+                    press(Shortcut(KeyEvent.KEYCODE_ESCAPE, listOf(Shortcut.LEFT_CONTROL)))
+
+                    // Étape 2: Taper le nom de l'application
+                    val appName = "spotify"
+                    appName.forEach { char ->
+                        val keyCode = charToKeyCode(char)
+                        press(Shortcut(keyCode))
+                    }
+
+                    // Étape 3: Appuyer sur Entrée pour lancer l'application
+                    press(Shortcut(KeyEvent.KEYCODE_ENTER))
+                }) {
+                    Text("Lancer : Spotify")
+                }
+            }
+
+
         }
 }
