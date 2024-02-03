@@ -235,22 +235,21 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
 
             Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
                 Button(onClick = {
-                    // Appui sur Ctrl + Echap
+                    // Étape 1 : Appui sur Ctrl + Echap
                     press(Shortcut(KeyEvent.KEYCODE_ESCAPE, listOf(Shortcut.LEFT_CONTROL)))
 
                     // Attendre brièvement pour permettre au menu Démarrer de s'ouvrir
-                    Thread.sleep(100) // 500 millisecondes, ajustez selon les besoins
+                    Thread.sleep(100)
 
-                    // Étape 2: Taper le nom de l'application
-                    // Remplacez "nomApplication" par le nom réel de votre application
+                    // Étape 2 : Taper le nom de l'application
                     val appName = "league of legends"
                     appName.forEach { char ->
-                        val keyCode = charToKeyCode(char) // Vous devez implémenter cette fonction
+                        val keyCode = charToKeyCode(char)
                         press(Shortcut(keyCode))
-                        Thread.sleep(100) // Un léger délai entre chaque touche
+                        Thread.sleep(100)
                     }
 
-                    // Étape 3: Appuyer sur Entrée pour lancer l'application
+                    // Étape 3 : Appuyer sur Entrée pour lancer l'application
                     press(Shortcut(KeyEvent.KEYCODE_ENTER))
 
                 }) {
@@ -260,17 +259,21 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
 
             Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
                 Button(onClick = {
-                    // Appui sur Ctrl + Echap
+                    // Étape 1 : Appui sur Ctrl + Echap
                     press(Shortcut(KeyEvent.KEYCODE_ESCAPE, listOf(Shortcut.LEFT_CONTROL)))
 
-                    // Étape 2: Taper le nom de l'application
+                    // Attendre brièvement pour permettre au menu Démarrer de s'ouvrir
+                    Thread.sleep(100)
+
+                    // Étape 2 : Taper le nom de l'application
                     val appName = "spotify"
                     appName.forEach { char ->
                         val keyCode = charToKeyCode(char)
                         press(Shortcut(keyCode))
+                        Thread.sleep(100)
                     }
 
-                    // Étape 3: Appuyer sur Entrée pour lancer l'application
+                    // Étape 3 : Appuyer sur Entrée pour lancer l'application
                     press(Shortcut(KeyEvent.KEYCODE_ENTER))
                 }) {
                     Text("Lancer : Spotify")
