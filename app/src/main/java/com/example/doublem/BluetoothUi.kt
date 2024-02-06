@@ -5,17 +5,29 @@ import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.view.KeyEvent
 import android.widget.Toast
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.paddingFromBaseline
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bluetooth
 import androidx.compose.material.icons.filled.BluetoothDisabled
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,9 +36,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.media3.common.util.Log
 import com.example.bluetoothsample.KeyboardSender
 
 data class Shortcut( val shortcutKey: Int,
@@ -140,146 +157,199 @@ fun BluetoothUiConnection(bluetoothController: BluetoothController) {
 
 @Composable
 fun BluetoothDesk(bluetoothController: BluetoothController) {
+    val connected = bluetoothController.status as? BluetoothController.Status.Connected ?: return
 
-        val connected = bluetoothController.status as? BluetoothController.Status.Connected ?: return
-
-        val context = LocalContext.current
-        val keyboardSender = KeyboardSender(connected.btHidDevice, connected.hostDevice)
+    val context = LocalContext.current
+    val keyboardSender = KeyboardSender(connected.btHidDevice, connected.hostDevice)
 
 
-        fun press(shortcut: Shortcut, releaseModifiers: Boolean = true) {
-            @SuppressLint("MissingPermission")
-            val result = keyboardSender.sendKeyboard(shortcut.shortcutKey, shortcut.modifiers, releaseModifiers)
-            if (!result) Toast.makeText(context,"can't find keymap for $shortcut",Toast.LENGTH_LONG).show()
+    fun press(shortcut: Shortcut, releaseModifiers: Boolean = true) {
+        @SuppressLint("MissingPermission")
+        val result = keyboardSender.sendKeyboard(shortcut.shortcutKey, shortcut.modifiers, releaseModifiers)
+        if (!result) Toast.makeText(context,"can't find keymap for $shortcut",Toast.LENGTH_LONG).show()
+    }
+
+    fun onClickImage(appToStart : String){
+        android.util.Log.d(MainActivity.TAG, "OnClick image")
+
+        // Étape 1 : Appui sur Ctrl + Echap
+        press(Shortcut(KeyEvent.KEYCODE_ESCAPE, listOf(Shortcut.LEFT_CONTROL)))
+
+        // Attendre brièvement pour permettre au menu Démarrer de s'ouvrir
+        Thread.sleep(100)
+
+        // Étape 2 : Taper le nom de l'application
+        appToStart.forEach { char ->
+            val keyCode = charToKeyCode(char)
+            android.util.Log.d("BluetoothHID", "Char: $char for the text: $appToStart")
+            press(Shortcut(keyCode))
+            Thread.sleep(100)
         }
 
-        Column( modifier = Modifier.fillMaxWidth().padding(20.dp)) {
+        // Étape 3 : Appuyer sur Entrée pour lancer l'application
+        press(Shortcut(KeyEvent.KEYCODE_ENTER))
+    }
 
+    data class AppItem(
+        val name: String,
+        @DrawableRes val icon: Int
+    )
+
+    val appList = listOf(
+        AppItem(name = "spotify", icon = R.drawable.ab2_quick_yoga),
+        AppItem(name = "league of legends", icon = R.drawable.ab1_inversions),
+        AppItem(name = "discord", icon = R.drawable.ab1_inversions)
+        // Ajoutez d'autres applications ici
+    )
+
+
+
+    // Usefull
+    @Composable
+    fun AppElementClickable(
+        appItem: AppItem,
+        onClick: () -> Unit,
+        modifier: Modifier = Modifier
+    ) {
+        Column(
+            modifier = modifier
+                .clickable(onClick = onClick),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = painterResource(appItem.icon),
+                contentDescription = appItem.name,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(54.dp)
+                    .clip(CircleShape)
+            )
+            Text(
+                text = appItem.name,
+                modifier = Modifier.paddingFromBaseline(top = 24.dp, bottom = 8.dp),
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    }
+
+    @Composable
+    fun AppList(
+        modifier: Modifier = Modifier
+    ) {
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            modifier = modifier
+        ) {
+            items(appList) { item ->
+                AppElementClickable(item, onClick = {
+                    onClickImage(item.name)
+                })
+            }
+        }
+    }
+
+    Column( modifier = Modifier.fillMaxWidth().padding(20.dp)) {
+
+        Spacer(modifier = Modifier.size(20.dp))
+        Text("Slide Desk")
+        Spacer(modifier = Modifier.size(10.dp))
+
+        Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+            Button(onClick = { press(Shortcut(KeyEvent.KEYCODE_DPAD_LEFT)) }) {
+                Text("<-")
+            }
             Spacer(modifier = Modifier.size(20.dp))
-            Text("Slide Desk")
-            Spacer(modifier = Modifier.size(10.dp))
-
-            Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                Button(onClick = { press(Shortcut(KeyEvent.KEYCODE_DPAD_LEFT)) }) {
-                    Text("<-")
-                }
-                Spacer(modifier = Modifier.size(20.dp))
-                Button(onClick = { press(Shortcut(KeyEvent.KEYCODE_DPAD_RIGHT)) }) {
-                    Text("->")
-                }
+            Button(onClick = { press(Shortcut(KeyEvent.KEYCODE_DPAD_RIGHT)) }) {
+                Text("->")
             }
-
-            Spacer(modifier = Modifier.size(10.dp))
-
-//            Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-//                Button(onClick = {press(Shortcut(KeyEvent.KEYCODE_DPAD_LEFT,listOf(Shortcut.LEFT_ALT, Shortcut.LEFT_GUI)) )}) {
-//                    Text("<- tab")
-//                }
-//                Spacer(modifier = Modifier.size(20.dp))
-//                Button(onClick = {press(Shortcut( KeyEvent.KEYCODE_DPAD_RIGHT,listOf(Shortcut.RIGHT_ALT, Shortcut.RIGHT_GUI)))}) {
-//                    Text("tab ->")
-//                }
-//            }
-//
-//            Spacer(modifier = Modifier.size(10.dp))
-
-//            Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-//                Button(onClick = {press(Shortcut(KeyEvent.KEYCODE_F,listOf(Shortcut.LEFT_CONTROL, Shortcut.LEFT_GUI)))}) {
-//                    Text("full screen")
-//                }
-//            }
-
-
-            Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                Button(onClick = {
-                    press(Shortcut(KeyEvent.KEYCODE_TAB, listOf(Shortcut.LEFT_ALT)))
-                }) {
-                    Text("ALT TAB")
-                }
-            }
-
-            Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                Button(onClick = {
-                    press(Shortcut(KeyEvent.KEYCODE_Q)) // Supposant que KEYCODE_A envoie "a"
-                    press(Shortcut(KeyEvent.KEYCODE_N)) // Supposant que KEYCODE_B envoie "b"
-                    press(Shortcut(KeyEvent.KEYCODE_T))
-                    press(Shortcut(KeyEvent.KEYCODE_O))
-                    press(Shortcut(KeyEvent.KEYCODE_I))
-                    press(Shortcut(KeyEvent.KEYCODE_N))
-                    press(Shortcut(KeyEvent.KEYCODE_E))
-
-                    press(Shortcut(KeyEvent.KEYCODE_SPACE))
-
-                    press(Shortcut(KeyEvent.KEYCODE_L))
-                    press(Shortcut(KeyEvent.KEYCODE_Q))
-
-                    press(Shortcut(KeyEvent.KEYCODE_SPACE))
-
-                    press(Shortcut(KeyEvent.KEYCODE_P))
-                    press(Shortcut(KeyEvent.KEYCODE_E))
-                    press(Shortcut(KeyEvent.KEYCODE_T))
-                    press(Shortcut(KeyEvent.KEYCODE_I))
-                    press(Shortcut(KeyEvent.KEYCODE_T))
-                    press(Shortcut(KeyEvent.KEYCODE_E))
-
-                    press(Shortcut(KeyEvent.KEYCODE_SPACE))
-
-                    press(Shortcut(KeyEvent.KEYCODE_S))
-                    press(Shortcut(KeyEvent.KEYCODE_Q))
-                    press(Shortcut(KeyEvent.KEYCODE_S))
-                    press(Shortcut(KeyEvent.KEYCODE_Q))
-                }) {
-                    Text("???")
-                }
-            }
-
-            Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                Button(onClick = {
-                    // Étape 1 : Appui sur Ctrl + Echap
-                    press(Shortcut(KeyEvent.KEYCODE_ESCAPE, listOf(Shortcut.LEFT_CONTROL)))
-
-                    // Attendre brièvement pour permettre au menu Démarrer de s'ouvrir
-                    Thread.sleep(100)
-
-                    // Étape 2 : Taper le nom de l'application
-                    val appName = "league of legends"
-                    appName.forEach { char ->
-                        val keyCode = charToKeyCode(char)
-                        press(Shortcut(keyCode))
-                        Thread.sleep(100)
-                    }
-
-                    // Étape 3 : Appuyer sur Entrée pour lancer l'application
-                    press(Shortcut(KeyEvent.KEYCODE_ENTER))
-
-                }) {
-                    Text("Lancer : League of legends")
-                }
-            }
-
-            Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                Button(onClick = {
-                    // Étape 1 : Appui sur Ctrl + Echap
-                    press(Shortcut(KeyEvent.KEYCODE_ESCAPE, listOf(Shortcut.LEFT_CONTROL)))
-
-                    // Attendre brièvement pour permettre au menu Démarrer de s'ouvrir
-                    Thread.sleep(100)
-
-                    // Étape 2 : Taper le nom de l'application
-                    val appName = "spotify"
-                    appName.forEach { char ->
-                        val keyCode = charToKeyCode(char)
-                        press(Shortcut(keyCode))
-                        Thread.sleep(100)
-                    }
-
-                    // Étape 3 : Appuyer sur Entrée pour lancer l'application
-                    press(Shortcut(KeyEvent.KEYCODE_ENTER))
-                }) {
-                    Text("Lancer : Spotify")
-                }
-            }
-
-
         }
+
+        Spacer(modifier = Modifier.size(10.dp))
+
+        Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+            Button(onClick = {
+                // Étape 1 : Appui sur Ctrl + Echap
+                press(Shortcut(KeyEvent.KEYCODE_ESCAPE, listOf(Shortcut.LEFT_CONTROL)))
+
+                // Attendre brièvement pour permettre au menu Démarrer de s'ouvrir
+                Thread.sleep(100)
+
+                // Étape 2 : Taper le nom de l'application
+                val appName = "league of legends"
+                appName.forEach { char ->
+                    val keyCode = charToKeyCode(char)
+                    press(Shortcut(keyCode))
+                    Thread.sleep(100)
+                }
+
+                // Étape 3 : Appuyer sur Entrée pour lancer l'application
+                press(Shortcut(KeyEvent.KEYCODE_ENTER))
+
+            }) {
+                Text("Lancer : League of legends")
+            }
+        }
+
+        Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+            Button(onClick = {
+                // Étape 1 : Appui sur Ctrl + Echap
+                press(Shortcut(KeyEvent.KEYCODE_ESCAPE, listOf(Shortcut.LEFT_CONTROL)))
+
+                // Attendre brièvement pour permettre au menu Démarrer de s'ouvrir
+                Thread.sleep(100)
+
+                // Étape 2 : Taper le nom de l'application
+                val appName = "spotify"
+                appName.forEach { char ->
+                    val keyCode = charToKeyCode(char)
+                    press(Shortcut(keyCode))
+                    Thread.sleep(100)
+                }
+
+                // Étape 3 : Appuyer sur Entrée pour lancer l'application
+                press(Shortcut(KeyEvent.KEYCODE_ENTER))
+            }) {
+                Text("Lancer : Spotify")
+            }
+        }
+//        AppElementClickable(R.drawable.ab2_quick_yoga, text = "Spotify", onClick = {
+//            onClickImage("Spotify")
+//        })
+
+        AppList()
+
+    }
 }
+
+
+
+
+
+
+//@Composable
+//fun AppElement(
+//    @DrawableRes drawable: Int,
+//    @StringRes text: Int,
+//    modifier: Modifier = Modifier
+//) {
+//    // Implement composable here
+//    Column (
+//        modifier = modifier,
+//        horizontalAlignment = Alignment.CenterHorizontally
+//    ){
+//        Image(
+//            painter = painterResource(drawable),
+//            contentDescription = null,
+//            contentScale = ContentScale.Crop,
+//            modifier = Modifier
+//                .size(88.dp)
+//                .clip(CircleShape),
+//        )
+//        Text(
+//            text = stringResource(text),
+//            modifier = Modifier.paddingFromBaseline(top = 24.dp, bottom = 8.dp),
+//            style = MaterialTheme.typography.bodyMedium
+//        )
+//    }
+//}
