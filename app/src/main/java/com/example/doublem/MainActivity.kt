@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -47,6 +48,12 @@ import com.example.doublem.ui.theme.DoubleMTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+//import com.example.doublem.ui.AppDestinations
 
 class MainActivity : ComponentActivity() {
     companion object {
@@ -88,7 +95,6 @@ class MainActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-
                         // Utilisez Row pour aligner le contenu en haut de l'écran
                         Row(
                             modifier = Modifier
@@ -124,7 +130,7 @@ class MainActivity : ComponentActivity() {
                         BluetoothUiConnection(bluetoothController)
                         BluetoothDesk(bluetoothController)
 
-
+                        AppNavigation()
                     }
                 }
             }
@@ -138,58 +144,40 @@ class MainActivity : ComponentActivity() {
  }
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
     Column(
-        modifier
-            .verticalScroll(rememberScrollState())
+        modifier = Modifier
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(Modifier.height(16.dp))
-//        SearchBar(Modifier.padding(horizontal = 16.dp))
-//        HomeSection(title = R.string.align_your_body) {
-//            AlignYourBodyRow()
-//        }
-//        HomeSection(title = R.string.favorite_collections) {
-//            FavoriteCollectionsGrid()
-//        }
-        Text(text = "Hello 2")
+        Row(
+            modifier = Modifier
+                .fillMaxWidth() // Prendre toute la largeur disponible
+                .padding(16.dp), // Ajouter un peu de marge autour de la barre supérieure
+            horizontalArrangement = Arrangement.End, // Aligner le contenu à la fin (droite)
+            verticalAlignment = Alignment.CenterVertically // Centrer verticalement les éléments dans la Row
+        ) {
+            // Je sais pas trop pourquoi ça marche mais quand je fais, c'est aligné
+        }
+        Text(text = "DoubleM app's!")
+        Button(onClick = { navController.navigate(AppDestinations.CREATE_ELEMENT_SCREEN) }) {
+            Text("Ajouter un élément")
+        }
+
         Spacer(Modifier.height(16.dp))
     }
 }
 
 
 @Composable
-fun AppPortrait() {
+fun AppPortrait(navController: NavController) {
     DoubleMTheme (){
         Scaffold(){ padding ->
-            HomeScreen(Modifier.padding(padding))
-            Text(text = "My app")
+            HomeScreen(Modifier.padding(padding), navController)
         }
     }
 }
-@Preview(widthDp = 360, heightDp = 640)
-@Composable
-fun AppPortraitPreview() {
-    AppPortrait()
-}
-
-//@Preview(showBackground = true, backgroundColor = 0xFFF5F0EE)
-//@Composable
-//fun AppElementPreview() {
-//    DoubleMTheme {
-//        AppElement(
-//            text = R.string.ab1_inversions,
-//            drawable = R.drawable.ab1_inversions,
-//            modifier = Modifier.padding(8.dp)
-//        )
-//    }
-//}
-
-
-//@Preview(widthDp = 360, heightDp = 640)
-//@Composable
-//fun SwitchWithCustomColorsPreview() {
-//    SwitchWithCustomColors()
-//}
 
 @Composable
 fun SwitchWithCustomColors(
@@ -221,6 +209,25 @@ fun setDarkModeEnabled(context: Context, isEnabled: Boolean) {
 fun isDarkModeEnabled(context: Context): Boolean {
     val prefs = context.getSharedPreferences("prefs_name", Context.MODE_PRIVATE)
     return prefs.getBoolean("dark_mode", false) // 'false' est la valeur par défaut si 'dark_mode' n'est pas trouvé
+}
+
+object AppDestinations {
+    const val MAIN_SCREEN = "main"
+    const val CREATE_ELEMENT_SCREEN = "createElement"
+}
+
+@Composable
+fun AppNavigation(): NavHostController {
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = AppDestinations.MAIN_SCREEN) {
+        composable(AppDestinations.MAIN_SCREEN) {
+            AppPortrait(navController = navController)
+        }
+        composable(AppDestinations.CREATE_ELEMENT_SCREEN) {
+            CreateApp(navController = navController)
+        }
+    }
+    return navController
 }
 
 

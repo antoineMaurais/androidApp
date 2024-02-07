@@ -44,6 +44,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.util.Log
+import androidx.navigation.NavController
 import com.example.bluetoothsample.KeyboardSender
 
 data class Shortcut( val shortcutKey: Int,
@@ -136,12 +137,12 @@ fun BluetoothUiConnection(bluetoothController: BluetoothController) {
 
             )
 
-            Icon(
-                if (btOn) Icons.Default.Bluetooth else Icons.Default.BluetoothDisabled,
-                "bluetooth",
-                modifier = Modifier.size(100.dp),
-                tint = if (btOn) Color.Blue else Color.Black,
-            )
+//            Icon(
+//                if (btOn) Icons.Default.Bluetooth else Icons.Default.BluetoothDisabled,
+//                "bluetooth",
+//                modifier = Modifier.size(100.dp),
+//                tint = if (btOn) Color.Blue else Color.Black,
+//            )
             if (btOn) {
                 Button(
                     onClick = { bluetoothController.release()}
@@ -313,10 +314,8 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
                 Text("Lancer : Spotify")
             }
         }
-//        AppElementClickable(R.drawable.ab2_quick_yoga, text = "Spotify", onClick = {
-//            onClickImage("Spotify")
-//        })
 
+        // Affichage du composant
         AppList()
 
     }
