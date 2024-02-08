@@ -77,12 +77,19 @@ dependencies {
     implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.0.0-alpha02")
 
 
-    //Room
+    // Room
     implementation("androidx.room:room-runtime:${rootProject.extra["room_version"]}")
     ksp("androidx.room:room-compiler:${rootProject.extra["room_version"]}")
     implementation("androidx.room:room-ktx:${rootProject.extra["room_version"]}")
 
+    // Navigation
     implementation("androidx.navigation:navigation-compose:2.7.6")
 
+    // Image
+    implementation("io.coil-kt:coil-compose:2.5.0")
+
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.0")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
 }

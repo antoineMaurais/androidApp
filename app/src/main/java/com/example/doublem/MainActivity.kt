@@ -2,17 +2,15 @@ package com.example.doublem
 
 import android.Manifest
 import android.content.Context
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
-import android.widget.Switch
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,10 +19,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.paddingFromBaseline
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -38,21 +33,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.doublem.ui.theme.DoubleMTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.doublem.pages.CreateApp
+
 //import com.example.doublem.ui.AppDestinations
 
 class MainActivity : ComponentActivity() {
@@ -129,8 +120,6 @@ class MainActivity : ComponentActivity() {
 
                         BluetoothUiConnection(bluetoothController)
                         BluetoothDesk(bluetoothController)
-
-                        AppNavigation()
                     }
                 }
             }
@@ -143,6 +132,7 @@ class MainActivity : ComponentActivity() {
     }
  }
 
+// Page principale une fois la connexion bluetooth établit
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
     Column(
@@ -160,7 +150,9 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
         ) {
             // Je sais pas trop pourquoi ça marche mais quand je fais, c'est aligné
         }
+        
         Text(text = "DoubleM app's!")
+
         Button(onClick = { navController.navigate(AppDestinations.CREATE_ELEMENT_SCREEN) }) {
             Text("Ajouter un élément")
         }
@@ -169,7 +161,7 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
     }
 }
 
-
+// Applique le thème de l'application à l'ensemble de l'application
 @Composable
 fun AppPortrait(navController: NavController) {
     DoubleMTheme (){
@@ -179,6 +171,7 @@ fun AppPortrait(navController: NavController) {
     }
 }
 
+// (Related to the dark mode) Switch button
 @Composable
 fun SwitchWithCustomColors(
     checked: Boolean,
@@ -197,7 +190,7 @@ fun SwitchWithCustomColors(
 }
 
 
-
+// (Related to the dark mode)
 fun setDarkModeEnabled(context: Context, isEnabled: Boolean) {
     val prefs = context.getSharedPreferences("prefs_name", Context.MODE_PRIVATE)
     with(prefs.edit()) {
@@ -206,23 +199,29 @@ fun setDarkModeEnabled(context: Context, isEnabled: Boolean) {
     }
 }
 
+// (Related to the dark mode)
 fun isDarkModeEnabled(context: Context): Boolean {
     val prefs = context.getSharedPreferences("prefs_name", Context.MODE_PRIVATE)
     return prefs.getBoolean("dark_mode", false) // 'false' est la valeur par défaut si 'dark_mode' n'est pas trouvé
 }
 
+// List des chemins de navigation
 object AppDestinations {
     const val MAIN_SCREEN = "main"
     const val CREATE_ELEMENT_SCREEN = "createElement"
 }
 
+// Navigation de l'application
 @Composable
 fun AppNavigation(): NavHostController {
     val navController = rememberNavController()
+
     NavHost(navController = navController, startDestination = AppDestinations.MAIN_SCREEN) {
+        // Page principale
         composable(AppDestinations.MAIN_SCREEN) {
             AppPortrait(navController = navController)
         }
+        // Page d'ajout d'applicaiton à lancer
         composable(AppDestinations.CREATE_ELEMENT_SCREEN) {
             CreateApp(navController = navController)
         }

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.paddingFromBaseline
 import androidx.compose.foundation.layout.size
@@ -51,6 +52,7 @@ data class Shortcut( val shortcutKey: Int,
                      val modifiers: List<KeyModifier> = emptyList(),
                      val releaseModifiers: Boolean = true,) {
 
+    // Commande HID pour les touches de controlles du clavier
     companion object {
         // Touche de base
         const val LEFT_CONTROL: KeyModifier = 0b1
@@ -64,6 +66,7 @@ data class Shortcut( val shortcutKey: Int,
 
 }
 
+// Traduction d'un texte en commande HID pour un clavier AZERTY
 fun charToKeyCode(char: Char): Int {
     return when (char) {
         'a' -> KeyEvent.KEYCODE_Q
@@ -97,6 +100,7 @@ fun charToKeyCode(char: Char): Int {
     }
 }
 
+// Interface pour ce connecter à un appareil en bluetooth
 @Composable
 fun BluetoothUiConnection(bluetoothController: BluetoothController) {
     val context = LocalContext.current
@@ -137,12 +141,6 @@ fun BluetoothUiConnection(bluetoothController: BluetoothController) {
 
             )
 
-//            Icon(
-//                if (btOn) Icons.Default.Bluetooth else Icons.Default.BluetoothDisabled,
-//                "bluetooth",
-//                modifier = Modifier.size(100.dp),
-//                tint = if (btOn) Color.Blue else Color.Black,
-//            )
             if (btOn) {
                 Button(
                     onClick = { bluetoothController.release()}
@@ -155,21 +153,20 @@ fun BluetoothUiConnection(bluetoothController: BluetoothController) {
         }
 }
 
-
 @Composable
 fun BluetoothDesk(bluetoothController: BluetoothController) {
     val connected = bluetoothController.status as? BluetoothController.Status.Connected ?: return
-
     val context = LocalContext.current
     val keyboardSender = KeyboardSender(connected.btHidDevice, connected.hostDevice)
 
-
+    // Fonction qui envoie un shortcut HID à l'ordinateur
     fun press(shortcut: Shortcut, releaseModifiers: Boolean = true) {
         @SuppressLint("MissingPermission")
         val result = keyboardSender.sendKeyboard(shortcut.shortcutKey, shortcut.modifiers, releaseModifiers)
         if (!result) Toast.makeText(context,"can't find keymap for $shortcut",Toast.LENGTH_LONG).show()
     }
 
+    // Fonction qui s'exécute lorsque l'utilisateur appuye sur une application pour la lancer
     fun onClickImage(appToStart : String){
         android.util.Log.d(MainActivity.TAG, "OnClick image")
 
@@ -191,6 +188,7 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
         press(Shortcut(KeyEvent.KEYCODE_ENTER))
     }
 
+    // Interface pour les applications affiché dans la liste des applications
     data class AppItem(
         val name: String,
         @DrawableRes val icon: Int
@@ -202,8 +200,6 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
         AppItem(name = "discord", icon = R.drawable.ab1_inversions)
         // Ajoutez d'autres applications ici
     )
-
-
 
     // Usefull
     @Composable
@@ -250,105 +246,31 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
         }
     }
 
-    Column( modifier = Modifier.fillMaxWidth().padding(20.dp)) {
+    // Affichage une fois la connection bluetooth réalisé
+    Column( modifier = Modifier
+        .fillMaxWidth()
+        .padding(20.dp)) {
 
-        Spacer(modifier = Modifier.size(20.dp))
-        Text("Slide Desk")
-        Spacer(modifier = Modifier.size(10.dp))
+        Spacer(Modifier.height(16.dp))
 
-        Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-            Button(onClick = { press(Shortcut(KeyEvent.KEYCODE_DPAD_LEFT)) }) {
-                Text("<-")
-            }
-            Spacer(modifier = Modifier.size(20.dp))
-            Button(onClick = { press(Shortcut(KeyEvent.KEYCODE_DPAD_RIGHT)) }) {
-                Text("->")
-            }
-        }
+        AppList()   // Affiche la liste des applications lanceable
 
-        Spacer(modifier = Modifier.size(10.dp))
+        AppNavigation() // Modifier appDashboard.kt pour modifer la page relié à ce bouton, ou modifier le composant HomeScreen qui est appelé dans AppNavigation dans le fichier MainActivity
 
-        Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-            Button(onClick = {
-                // Étape 1 : Appui sur Ctrl + Echap
-                press(Shortcut(KeyEvent.KEYCODE_ESCAPE, listOf(Shortcut.LEFT_CONTROL)))
+        Spacer(Modifier.height(16.dp))
 
-                // Attendre brièvement pour permettre au menu Démarrer de s'ouvrir
-                Thread.sleep(100)
-
-                // Étape 2 : Taper le nom de l'application
-                val appName = "league of legends"
-                appName.forEach { char ->
-                    val keyCode = charToKeyCode(char)
-                    press(Shortcut(keyCode))
-                    Thread.sleep(100)
-                }
-
-                // Étape 3 : Appuyer sur Entrée pour lancer l'application
-                press(Shortcut(KeyEvent.KEYCODE_ENTER))
-
-            }) {
-                Text("Lancer : League of legends")
-            }
-        }
-
-        Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-            Button(onClick = {
-                // Étape 1 : Appui sur Ctrl + Echap
-                press(Shortcut(KeyEvent.KEYCODE_ESCAPE, listOf(Shortcut.LEFT_CONTROL)))
-
-                // Attendre brièvement pour permettre au menu Démarrer de s'ouvrir
-                Thread.sleep(100)
-
-                // Étape 2 : Taper le nom de l'application
-                val appName = "spotify"
-                appName.forEach { char ->
-                    val keyCode = charToKeyCode(char)
-                    press(Shortcut(keyCode))
-                    Thread.sleep(100)
-                }
-
-                // Étape 3 : Appuyer sur Entrée pour lancer l'application
-                press(Shortcut(KeyEvent.KEYCODE_ENTER))
-            }) {
-                Text("Lancer : Spotify")
-            }
-        }
-
-        // Affichage du composant
-        AppList()
+//        Text("Slide Desk")
+//        Spacer(modifier = Modifier.size(10.dp))
+//
+//        Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+//            Button(onClick = { press(Shortcut(KeyEvent.KEYCODE_DPAD_LEFT)) }) {
+//                Text("<-")
+//            }
+//            Spacer(modifier = Modifier.size(20.dp))
+//            Button(onClick = { press(Shortcut(KeyEvent.KEYCODE_DPAD_RIGHT)) }) {
+//                Text("->")
+//            }
+//        }
 
     }
 }
-
-
-
-
-
-
-//@Composable
-//fun AppElement(
-//    @DrawableRes drawable: Int,
-//    @StringRes text: Int,
-//    modifier: Modifier = Modifier
-//) {
-//    // Implement composable here
-//    Column (
-//        modifier = modifier,
-//        horizontalAlignment = Alignment.CenterHorizontally
-//    ){
-//        Image(
-//            painter = painterResource(drawable),
-//            contentDescription = null,
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .size(88.dp)
-//                .clip(CircleShape),
-//        )
-//        Text(
-//            text = stringResource(text),
-//            modifier = Modifier.paddingFromBaseline(top = 24.dp, bottom = 8.dp),
-//            style = MaterialTheme.typography.bodyMedium
-//        )
-//    }
-//}
