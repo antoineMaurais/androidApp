@@ -6,12 +6,12 @@ interface AppContainer {
     val hidsRepository : HidsRepository
 }
 
-/*
+
 class AppDataContainer(private val context: Context) : AppContainer {
 
     override val hidsRepository: HidsRepository by lazy{
         OfflineHidsRepository(DeckDatabase.getDatabase(context).hidDao())
     }
 }
-*/
+
 

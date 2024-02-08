@@ -42,6 +42,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.doublem.data.AppContainer
+import com.example.doublem.data.AppDataContainer
 import com.example.doublem.pages.CreateApp
 
 //import com.example.doublem.ui.AppDestinations
@@ -68,7 +70,7 @@ class MainActivity : ComponentActivity() {
             requestPermissionLauncher.launch(Manifest.permission.BLUETOOTH_CONNECT)
         }
     }
-
+    lateinit var container: AppContainer
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -76,6 +78,9 @@ class MainActivity : ComponentActivity() {
         ensureBluetoothPermission(this)
 
         bluetoothController = BluetoothController()
+
+
+        container = AppDataContainer(this)
 
         setContent {
             // Utilisez 'var' pour que la variable puisse être réaffectée

@@ -9,7 +9,7 @@ import com.example.doublem.data.HidsRepository
 /**
  * ViewModel to validate and insert hid in the Room database.
  */
-class HidEntryViewModel(private val hidsRepository: HidsRepository) : ViewModel() {
+class HidEntryViewModel2(private val hidsRepository: HidsRepository) : ViewModel() {
 
     /**
      * Holds current hid ui state

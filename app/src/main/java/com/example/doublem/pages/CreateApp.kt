@@ -11,13 +11,23 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.doublem.HidEntryViewModel
+import com.example.doublem.data.Hid
+import com.example.doublem.ui.AppViewModelProvider
+import kotlinx.coroutines.launch
+import java.io.IOException
 
 @Composable
-fun CreateApp(navController: NavController) {
+fun CreateApp(
+    navController: NavController,
+    viewModel: HidEntryViewModel = viewModel(factory = AppViewModelProvider.Factory)
+) {
     // Utilisation de CreateAppViewModel pour gérer l'état
 //    val createAppViewModel: CreateAppViewModel = viewModel()
     var appName by remember { mutableStateOf("") }
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -28,33 +38,36 @@ fun CreateApp(navController: NavController) {
         Spacer(Modifier.height(16.dp))
 
         Text("Ajouter une nouvelle application")
-
         TextField(
             value = appName,
             onValueChange = { appName = it },
             label = { Text("Nom de l'application") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
 
         Spacer(Modifier.height(16.dp))
 
         Row(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Button(onClick = {
-                navController.popBackStack()
-            }) {
+            Button(onClick = { navController.popBackStack() }) {
                 Text("Annuler")
             }
-//            Button(onClick = {
-//                createAppViewModel.insertHid(appName)
-////                navController.popBackStack()
-//                // Logique pour ajouter une nouvelle application avec le nom et l'image
-//            }) {
-//                Text("Ajouter")
-//            }
+            Button(onClick = {
+                if (appName.isNotEmpty()) {
+                    try {
+                        coroutineScope.launch {
+                            viewModel.saveHid()
+//                      navController.popBackStack()
+                        }
+                    } catch(e : IOException) {
+                        e.printStackTrace()
+                    }
+                }
+            }) {
+                Text("Ajouter")
+            }
         }
     }
 }
