@@ -1,4 +1,4 @@
-package com.example.doublem
+package com.example.doublem.composants.Bluetooth
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
@@ -37,14 +37,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.bluetoothsample.KeyboardSender
+import com.example.doublem.composants.Keyboard.KeyboardSender
+import com.example.doublem.AppNavigation
+import com.example.doublem.KeyModifier
+import com.example.doublem.MainActivity
+import com.example.doublem.R
 import com.example.doublem.composants.hid.HidListScreen
-import com.example.doublem.ui.AppViewModelProvider
-import com.example.doublem.ui.hid.HidEntryViewModel
+import com.example.doublem.data.AppViewModelProvider
+import com.example.doublem.composants.hid.HidEntryViewModel
 
-data class Shortcut( val shortcutKey: Int,
-                     val modifiers: List<KeyModifier> = emptyList(),
-                     val releaseModifiers: Boolean = true,) {
+data class Shortcut(val shortcutKey: Int,
+                    val modifiers: List<KeyModifier> = emptyList(),
+                    val releaseModifiers: Boolean = true,) {
 
     // Commande HID pour les touches de controlles du clavier
     companion object {

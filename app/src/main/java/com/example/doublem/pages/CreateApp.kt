@@ -13,8 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.doublem.ui.AppViewModelProvider
-import com.example.doublem.ui.hid.HidEntryViewModel
+import com.example.doublem.data.AppViewModelProvider
+import com.example.doublem.composants.hid.HidEntryViewModel
 import kotlinx.coroutines.launch
 
 @Composable

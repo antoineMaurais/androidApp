@@ -1,5 +1,8 @@
 package com.example.doublem.data
 
+import com.example.doublem.data.hid.Hid
+import com.example.doublem.data.hid.HidDao
+import com.example.doublem.data.hid.HidsRepository
 import kotlinx.coroutines.flow.Flow
 
 class OfflineHidsRepository (private val hidDao: HidDao) : HidsRepository {

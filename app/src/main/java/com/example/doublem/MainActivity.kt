@@ -40,6 +40,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.doublem.composants.Bluetooth.BluetoothController
+import com.example.doublem.composants.Bluetooth.BluetoothDesk
+import com.example.doublem.composants.Bluetooth.BluetoothUiConnection
 import com.example.doublem.data.AppContainer
 import com.example.doublem.data.AppDataContainer
 import com.example.doublem.pages.CreateApp

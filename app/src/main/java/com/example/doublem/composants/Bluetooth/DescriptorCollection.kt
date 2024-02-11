@@ -1,4 +1,4 @@
-package com.example.bluetoothsample
+package com.example.doublem.composants.Bluetooth
 
 object DescriptorCollection {
 

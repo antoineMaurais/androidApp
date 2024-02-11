@@ -1,6 +1,7 @@
 package com.example.doublem.data
 
 import android.content.Context
+import com.example.doublem.data.hid.HidsRepository
 
 interface AppContainer {
     val hidsRepository : HidsRepository

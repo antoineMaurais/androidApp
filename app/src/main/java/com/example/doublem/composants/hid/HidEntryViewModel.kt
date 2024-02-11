@@ -1,4 +1,4 @@
-package com.example.doublem.ui.hid
+package com.example.doublem.composants.hid
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -6,8 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
-import com.example.doublem.data.Hid
-import com.example.doublem.data.HidsRepository
+import com.example.doublem.data.hid.Hid
+import com.example.doublem.data.hid.HidsRepository
 
 class HidEntryViewModel(private val hidsRepository: HidsRepository) : ViewModel() {
     var hidUiState by mutableStateOf(HidUiState())

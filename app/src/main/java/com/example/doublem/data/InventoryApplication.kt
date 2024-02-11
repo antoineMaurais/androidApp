@@ -1,4 +1,4 @@
-package com.example.doublem
+package com.example.doublem.data
 
 import android.app.Application
 import com.example.doublem.data.AppContainer

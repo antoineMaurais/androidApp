@@ -1,4 +1,4 @@
-package com.example.doublem.data
+package com.example.doublem.data.hid
 
 import kotlinx.coroutines.flow.Flow
 

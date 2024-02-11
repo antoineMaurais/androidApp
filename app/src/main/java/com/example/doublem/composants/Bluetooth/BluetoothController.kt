@@ -1,4 +1,4 @@
-package com.example.doublem
+package com.example.doublem.composants.Bluetooth
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
@@ -11,7 +11,6 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.example.bluetoothsample.DescriptorCollection
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
@@ -39,7 +38,7 @@ class BluetoothController(val autoPairFlag: Boolean = false) {
     }
 
     sealed class Status(val display: String) {
-        class Disconnected(var btHidDevice: BluetoothHidDevice?):Status("Disconnected")
+        class Disconnected(var btHidDevice: BluetoothHidDevice?): Status("Disconnected")
         class Initialized(val btHidDevice: BluetoothHidDevice): Status("Initialized")
         class Waiting(val btHidDevice: BluetoothHidDevice, val pluggedDevice: BluetoothDevice): Status("Waiting for ${pluggedDevice.name}")
         class Connected(val btHidDevice: BluetoothHidDevice, val hostDevice: BluetoothDevice): Status("Connected to ${hostDevice.name}")

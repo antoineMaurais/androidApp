@@ -6,9 +6,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.doublem.data.Hid
-import com.example.doublem.ui.AppViewModelProvider
-import com.example.doublem.ui.hid.HidEntryViewModel
+import com.example.doublem.data.hid.Hid
+import com.example.doublem.data.AppViewModelProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 

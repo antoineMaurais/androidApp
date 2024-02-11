@@ -1,4 +1,4 @@
-package com.example.doublem.data
+package com.example.doublem.data.hid
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
