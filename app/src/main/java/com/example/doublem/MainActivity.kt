@@ -34,8 +34,6 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var bluetoothController: BluetoothController
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -66,10 +64,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-
-
-
 
     override fun onPause() {
         super.onPause()

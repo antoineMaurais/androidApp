@@ -42,7 +42,8 @@ data class Shortcut(val shortcutKey: Int,
 
 // Traduction d'un texte en commande HID pour un clavier AZERTY
 fun charToKeyCode(char: Char): Int {
-    return when (char) {
+    val lowerChar = char.lowercaseChar() // Convertit le caractère en minuscule
+    return when (lowerChar) {
         'a' -> KeyEvent.KEYCODE_Q
         'b' -> KeyEvent.KEYCODE_B
         'c' -> KeyEvent.KEYCODE_C
