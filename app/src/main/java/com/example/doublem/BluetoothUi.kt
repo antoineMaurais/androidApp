@@ -6,47 +6,41 @@ import android.content.Intent
 import android.view.KeyEvent
 import android.widget.Toast
 import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.paddingFromBaseline
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Bluetooth
-import androidx.compose.material.icons.filled.BluetoothDisabled
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.media3.common.util.Log
-import androidx.navigation.NavController
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bluetoothsample.KeyboardSender
+import com.example.doublem.composants.hid.HidListScreen
+import com.example.doublem.ui.AppViewModelProvider
+import com.example.doublem.ui.hid.HidEntryViewModel
 
 data class Shortcut( val shortcutKey: Int,
                      val modifiers: List<KeyModifier> = emptyList(),
@@ -229,18 +223,40 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
         }
     }
 
+//    @Composable
+//    fun AppList(
+//        modifier: Modifier = Modifier
+//    ) {
+//        LazyRow(
+//            horizontalArrangement = Arrangement.spacedBy(8.dp),
+//            contentPadding = PaddingValues(horizontal = 16.dp),
+//            modifier = modifier
+//        ) {
+//            items(appList) { item ->
+//                AppElementClickable(item, onClick = {
+//                    onClickImage(item.name)
+//                })
+//            }
+//        }
+//    }
+
     @Composable
-    fun AppList(
-        modifier: Modifier = Modifier
+    fun AppListWithDAO(
+        modifier: Modifier = Modifier,
+        viewModel: HidEntryViewModel = viewModel(factory = AppViewModelProvider.Factory)
     ) {
+        val hids by viewModel.hids.observeAsState(initial = emptyList())
+        android.util.Log.i("hid", "hids = "+ hids)
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(horizontal = 16.dp),
             modifier = modifier
         ) {
-            items(appList) { item ->
-                AppElementClickable(item, onClick = {
-                    onClickImage(item.name)
+            items(hids) { hid ->
+                val app = AppItem(name = hid.name, icon = R.drawable.ab2_quick_yoga)
+
+                AppElementClickable(app, onClick = {
+                    onClickImage(hid.name)
                 })
             }
         }
@@ -253,24 +269,15 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
 
         Spacer(Modifier.height(16.dp))
 
-        AppList()   // Affiche la liste des applications lanceable
+//        AppList()   // Affiche la liste des applications lanceable
+
+        AppListWithDAO()
+
+        HidListScreen()
 
         AppNavigation() // Modifier appDashboard.kt pour modifer la page relié à ce bouton, ou modifier le composant HomeScreen qui est appelé dans AppNavigation dans le fichier MainActivity
 
         Spacer(Modifier.height(16.dp))
-
-//        Text("Slide Desk")
-//        Spacer(modifier = Modifier.size(10.dp))
-//
-//        Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-//            Button(onClick = { press(Shortcut(KeyEvent.KEYCODE_DPAD_LEFT)) }) {
-//                Text("<-")
-//            }
-//            Spacer(modifier = Modifier.size(20.dp))
-//            Button(onClick = { press(Shortcut(KeyEvent.KEYCODE_DPAD_RIGHT)) }) {
-//                Text("->")
-//            }
-//        }
 
     }
 }

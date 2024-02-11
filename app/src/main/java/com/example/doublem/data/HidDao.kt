@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface HidDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(hid: Hid)
+    suspend fun insert(hid: Hid) : Long
 
     @Update
     suspend fun update(hid: Hid)

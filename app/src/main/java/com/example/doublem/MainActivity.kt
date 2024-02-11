@@ -2,13 +2,11 @@ package com.example.doublem
 
 import android.Manifest
 import android.content.Context
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -49,6 +47,8 @@ import com.example.doublem.pages.CreateApp
 //import com.example.doublem.ui.AppDestinations
 
 class MainActivity : ComponentActivity() {
+    lateinit var container: AppContainer
+
     companion object {
         const val TAG = "MainActivity"
     }
@@ -70,7 +70,6 @@ class MainActivity : ComponentActivity() {
             requestPermissionLauncher.launch(Manifest.permission.BLUETOOTH_CONNECT)
         }
     }
-    lateinit var container: AppContainer
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -104,6 +103,7 @@ class MainActivity : ComponentActivity() {
                                 text = "Dark Mode",
                                 style = MaterialTheme.typography.bodyMedium
                             )
+                            Spacer(Modifier.padding(5.dp))
                             // Utilisez Column pour aligner verticalement, si nécessaire pour d'autres éléments
                             Column(
                                 horizontalAlignment = Alignment.End // Aligner le contenu horizontalement à la fin (droite)

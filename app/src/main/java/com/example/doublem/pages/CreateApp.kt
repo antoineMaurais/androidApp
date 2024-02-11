@@ -13,19 +13,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.doublem.HidEntryViewModel
-import com.example.doublem.data.Hid
 import com.example.doublem.ui.AppViewModelProvider
+import com.example.doublem.ui.hid.HidEntryViewModel
 import kotlinx.coroutines.launch
-import java.io.IOException
 
 @Composable
 fun CreateApp(
     navController: NavController,
     viewModel: HidEntryViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    // Utilisation de CreateAppViewModel pour gérer l'état
-//    val createAppViewModel: CreateAppViewModel = viewModel()
     var appName by remember { mutableStateOf("") }
     val coroutineScope = rememberCoroutineScope()
 
@@ -56,14 +52,12 @@ fun CreateApp(
             }
             Button(onClick = {
                 if (appName.isNotEmpty()) {
-                    try {
-                        coroutineScope.launch {
-                            viewModel.saveHid()
-//                      navController.popBackStack()
-                        }
-                    } catch(e : IOException) {
-                        e.printStackTrace()
+
+                    coroutineScope.launch {
+                        viewModel.saveHid(appName)
+                        navController.popBackStack()
                     }
+
                 }
             }) {
                 Text("Ajouter")

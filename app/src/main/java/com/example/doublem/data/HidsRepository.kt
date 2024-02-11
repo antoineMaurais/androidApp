@@ -16,7 +16,7 @@ interface HidsRepository {
     /**
      * Insert hid in the data source
      */
-    suspend fun insertHid(hid: Hid)
+    suspend fun insertHid(hid: Hid) : Long
 
     /**
      * Delete hid from the data source
