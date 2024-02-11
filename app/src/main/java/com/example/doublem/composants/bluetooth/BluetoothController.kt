@@ -1,4 +1,4 @@
-package com.example.doublem.composants.Bluetooth
+package com.example.doublem.composants.bluetooth
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
@@ -11,6 +11,7 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.example.doublem.composants.keyboard.DescriptorCollection
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 

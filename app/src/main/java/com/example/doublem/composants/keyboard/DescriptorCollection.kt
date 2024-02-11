@@ -1,4 +1,4 @@
-package com.example.doublem.composants.Bluetooth
+package com.example.doublem.composants.keyboard
 
 object DescriptorCollection {
 

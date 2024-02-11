@@ -1,4 +1,4 @@
-package com.example.doublem.composants.Keyboard
+package com.example.doublem.composants.keyboard
 
 import android.view.KeyEvent
 

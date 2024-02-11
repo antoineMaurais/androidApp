@@ -33,11 +33,11 @@ fun CreateApp(
     ) {
         Spacer(Modifier.height(16.dp))
 
-        Text("Ajouter une nouvelle application")
+        Text("Add a new application")
         TextField(
             value = appName,
             onValueChange = { appName = it },
-            label = { Text("Nom de l'application") },
+            label = { Text("Application name") },
             modifier = Modifier.fillMaxWidth(),
         )
 
@@ -48,7 +48,7 @@ fun CreateApp(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Button(onClick = { navController.popBackStack() }) {
-                Text("Annuler")
+                Text("Cancel")
             }
             Button(onClick = {
                 if (appName.isNotEmpty()) {
@@ -60,7 +60,7 @@ fun CreateApp(
 
                 }
             }) {
-                Text("Ajouter")
+                Text("Add")
             }
         }
     }
