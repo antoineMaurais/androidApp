@@ -20,15 +20,6 @@ class HidEntryViewModel(private val hidsRepository: HidsRepository) : ViewModel(
 
     val hids: LiveData<List<Hid>> = hidsRepository.getAllHidsStream().asLiveData()
 
-
-//    suspend fun saveHid(name: String) {
-//        if (!validateInput()) {
-//            val newHid = Hid(name = name)
-//            hidsRepository.insertHid(newHid)
-////            val hid = hidsRepository.insertHid(hidUiState.hidDetails.toHid())
-//            Log.i("toto","saveHid hid = (${newHid.id}) and name = (${newHid.name})")
-//        }
-//    }
     suspend fun saveHid(name: String) {
         if (name.isNotBlank()) {
             val newHid = Hid(name = name)

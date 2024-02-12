@@ -104,18 +104,6 @@ fun AppElementClickable(
 
     // Dialogue pour éditer ou supprimer l'application
     if (showDialog) {
-//        EditAppDialog(
-//            appItem = Hid,
-//            onDismiss = { showDialog = false },
-////            onDelete = {
-////                // Gérez la suppression ici
-////                showDialog = false
-////            },
-//            onSave = { newName ->
-//                // Gérez  la sauvegarde du nouveau nom ici
-//                showDialog = false
-//            }
-//        )
         EditAppDialog(
             appItem = appItem, // Assurez-vous que appItem est de type Hid
             onDismiss = { showDialog = false },
@@ -130,11 +118,7 @@ fun EditAppDialog(
     onDismiss: () -> Unit,
     viewModel: HidEntryViewModel
 ) {
-//    val context = LocalContext.current
-//    val viewModel: HidEntryViewModel = viewModel() // Obtenez le ViewModel dans un contexte Composable.
-
     var text by remember { mutableStateOf(appItem.name) }
-
     val coroutineScope = rememberCoroutineScope()
 
     AlertDialog(
@@ -150,9 +134,6 @@ fun EditAppDialog(
             }
         },
         confirmButton = {
-//            Button(
-//                onClick = { onSave(text) }
-//            ) { Text("Save") }
             Button(
                 onClick = {
                     coroutineScope.launch {
