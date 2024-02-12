@@ -10,7 +10,7 @@ class OfflineHidsRepository (private val hidDao: HidDao) : HidsRepository {
 
     override fun getHidStream(id: Int): Flow<Hid?> = hidDao.getHid(id)
 
-    override suspend fun insertHid(hid: Hid) = hidDao.insert(hid)
+    override suspend fun insertHid(hid: Hid): Long = hidDao.insert(hid)
 
     override suspend fun deleteHid(hid: Hid) = hidDao.delete(hid)
 

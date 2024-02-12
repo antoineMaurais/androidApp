@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +34,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.media3.common.util.Log
 import com.example.doublem.MainActivity
 import com.example.doublem.R
 import com.example.doublem.composants.bluetooth.BluetoothInteractionHandler
@@ -40,11 +42,13 @@ import com.example.doublem.composants.bluetooth.Shortcut
 import com.example.doublem.composants.bluetooth.charToKeyCode
 import com.example.doublem.composants.hid.HidEntryViewModel
 import com.example.doublem.data.AppViewModelProvider
+import com.example.doublem.data.hid.Hid
+import kotlinx.coroutines.launch
 
 // Usefull
 @Composable
 fun AppElementClickable(
-    appItem: AppItem,
+    appItem: Hid,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     bluetoothInteractionHandler: BluetoothInteractionHandler
@@ -79,7 +83,7 @@ fun AppElementClickable(
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         Image(
-            painter = painterResource(appItem.icon),
+            painter = painterResource(R.drawable.ab2_quick_yoga),
             contentDescription = appItem.name,
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -91,33 +95,47 @@ fun AppElementClickable(
             modifier = Modifier.paddingFromBaseline(top = 24.dp, bottom = 8.dp),
             style = MaterialTheme.typography.bodyMedium
         )
+        Text(
+            text = appItem.id.toString(),
+            modifier = Modifier.paddingFromBaseline(top = 24.dp, bottom = 8.dp),
+            style = MaterialTheme.typography.bodyMedium
+        )
     }
 
     // Dialogue pour éditer ou supprimer l'application
     if (showDialog) {
+//        EditAppDialog(
+//            appItem = Hid,
+//            onDismiss = { showDialog = false },
+////            onDelete = {
+////                // Gérez la suppression ici
+////                showDialog = false
+////            },
+//            onSave = { newName ->
+//                // Gérez  la sauvegarde du nouveau nom ici
+//                showDialog = false
+//            }
+//        )
         EditAppDialog(
-            appItem = appItem,
+            appItem = appItem, // Assurez-vous que appItem est de type Hid
             onDismiss = { showDialog = false },
-            onDelete = {
-                // Gérez la suppression ici
-                showDialog = false
-            },
-            onSave = { newName ->
-                // Gérez la sauvegarde du nouveau nom ici
-                showDialog = false
-            }
+            viewModel = viewModel() // Assurez-vous que le ViewModel est accessible ici. Sinon, passez-le comme paramètre.
         )
     }
 }
 
 @Composable
 fun EditAppDialog(
-    appItem: AppItem,
+    appItem: Hid,
     onDismiss: () -> Unit,
-    onDelete: () -> Unit,
-    onSave: (String) -> Unit
+    viewModel: HidEntryViewModel
 ) {
+//    val context = LocalContext.current
+//    val viewModel: HidEntryViewModel = viewModel() // Obtenez le ViewModel dans un contexte Composable.
+
     var text by remember { mutableStateOf(appItem.name) }
+
+    val coroutineScope = rememberCoroutineScope()
 
     AlertDialog(
         onDismissRequest = { onDismiss() },
@@ -132,17 +150,33 @@ fun EditAppDialog(
             }
         },
         confirmButton = {
+//            Button(
+//                onClick = { onSave(text) }
+//            ) { Text("Save") }
             Button(
-                onClick = { onSave(text) }
+                onClick = {
+                    coroutineScope.launch {
+                        val updatedHid = appItem.copy(name = text) // Mettez à jour le nom
+                        viewModel.updateHid(updatedHid) // Suppose que vous avez une telle fonction
+                        onDismiss()
+                    }
+                }
             ) { Text("Save") }
         },
         dismissButton = {
             Button(
-                onClick = { onDelete() }
+                onClick = {
+                    coroutineScope.launch {
+                        viewModel.deleteHid(appItem)
+                        android.util.Log.i("toto","coroutineScope deleteHid hid = (${appItem.id}) and name = (${appItem.name})")
+                        onDismiss()
+                    }
+                }
             ) { Text("Delete") }
         }
     )
 }
+
 
 @Composable
 fun AppListWithDAO(
@@ -158,10 +192,10 @@ fun AppListWithDAO(
         modifier = modifier
     ) {
         items(hids) { hid ->
-            val app = AppItem(name = hid.name, icon = R.drawable.ab2_quick_yoga)
+            android.util.Log.d("tata", "hid.id = ${hid.id}")
 
-            AppElementClickable(app, onClick = {
-                onClickImage(app.name, bluetoothInteractionHandler)
+            AppElementClickable(hid, onClick = {
+                onClickImage(hid.name, bluetoothInteractionHandler)
             }, bluetoothInteractionHandler = bluetoothInteractionHandler)
         }
     }

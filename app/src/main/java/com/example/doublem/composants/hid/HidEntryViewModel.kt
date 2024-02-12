@@ -21,18 +21,38 @@ class HidEntryViewModel(private val hidsRepository: HidsRepository) : ViewModel(
     val hids: LiveData<List<Hid>> = hidsRepository.getAllHidsStream().asLiveData()
 
 
+//    suspend fun saveHid(name: String) {
+//        if (!validateInput()) {
+//            val newHid = Hid(name = name)
+//            hidsRepository.insertHid(newHid)
+////            val hid = hidsRepository.insertHid(hidUiState.hidDetails.toHid())
+//            Log.i("toto","saveHid hid = (${newHid.id}) and name = (${newHid.name})")
+//        }
+//    }
     suspend fun saveHid(name: String) {
-        if (!validateInput()) {
+        if (name.isNotBlank()) {
             val newHid = Hid(name = name)
-            hidsRepository.insertHid(newHid)
-//            val hid = hidsRepository.insertHid(hidUiState.hidDetails.toHid())
-            Log.i("toto","hid = ($newHid)")
+            val insertedId = hidsRepository.insertHid(newHid)
+//            val insertedHid = newHid.copy(id = insertedId.toInt())
+            Log.i("toto","saveHid hid = (${insertedId})")
         }
     }
 
     private fun validateInput(uiState: HidDetails = hidUiState.hidDetails): Boolean {
         return with(uiState) {
             name.isNotBlank()
+        }
+    }
+
+    suspend fun deleteHid(hid: Hid) {
+        Log.i("toto","deleteHid hid = (${hid.id}) and name = (${hid.name})")
+        hidsRepository.deleteHid(hid)
+    }
+
+    suspend fun updateHid(updateHid: Hid) {
+        if (!validateInput()) {
+            hidsRepository.updateHid(updateHid)
+            Log.i("toto","updateHid hid = (${updateHid.id}) and name = (${updateHid.name})")
         }
     }
 }
