@@ -95,11 +95,6 @@ fun AppElementClickable(
             modifier = Modifier.paddingFromBaseline(top = 24.dp, bottom = 8.dp),
             style = MaterialTheme.typography.bodyMedium
         )
-        Text(
-            text = appItem.id.toString(),
-            modifier = Modifier.paddingFromBaseline(top = 24.dp, bottom = 8.dp),
-            style = MaterialTheme.typography.bodyMedium
-        )
     }
 
     // Dialogue pour éditer ou supprimer l'application
