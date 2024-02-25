@@ -2,6 +2,7 @@ package com.example.doublem.composants.bluetooth
 
 import android.bluetooth.BluetoothAdapter
 import android.content.Intent
+import android.util.Log
 import android.view.KeyEvent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -78,6 +79,8 @@ fun charToKeyCode(char: Char): Int {
 // Interface pour ce connecter à un appareil en bluetooth
 @Composable
 fun BluetoothUiConnection(bluetoothController: BluetoothController) {
+    Log.i("toto","In BluetoothUiConnection")
+
     val context = LocalContext.current
     var isButtonInitVisible by remember { mutableStateOf(true) }
 

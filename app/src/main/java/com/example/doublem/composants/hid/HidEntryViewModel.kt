@@ -1,11 +1,14 @@
 package com.example.doublem.composants.hid
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import com.example.doublem.R
 import com.example.doublem.data.hid.Hid
 import com.example.doublem.data.hid.HidsRepository
 
@@ -20,11 +23,10 @@ class HidEntryViewModel(private val hidsRepository: HidsRepository) : ViewModel(
 
     val hids: LiveData<List<Hid>> = hidsRepository.getAllHidsStream().asLiveData()
 
-    suspend fun saveHid(name: String) {
+    suspend fun saveHid(name: String, imageUri: String) {
         if (name.isNotBlank()) {
-            val newHid = Hid(name = name)
+            val newHid = Hid(name = name, imageUri= imageUri)
             val insertedId = hidsRepository.insertHid(newHid)
-//            val insertedHid = newHid.copy(id = insertedId.toInt())
             Log.i("toto","saveHid hid = (${insertedId})")
         }
     }
@@ -55,12 +57,15 @@ data class HidUiState(
 
 data class HidDetails(
     val id: Int = 0,
-    val name: String = ""
+    val name: String = "",
+//    val imageResId: Int = R.drawable.ab1_inversions // Identifiant de la ressource drawable par défaut
+    val imgUri: String = "content://media/picker/0/com.android.providers.media.photopicker/media/1000010397"
 )
 
 fun HidDetails.toHid(): Hid = Hid(
     id = id,
-    name = name
+    name = name,
+    imageUri = imgUri
 )
 
 fun Hid.toHidUiState(isEntryValid: Boolean = false): HidUiState = HidUiState(

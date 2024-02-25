@@ -1,12 +1,17 @@
 package com.example.doublem.composants.app
 
+import android.net.Uri
 import android.view.KeyEvent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.paddingFromBaseline
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -14,6 +19,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -33,8 +39,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.common.util.Log
+import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
 import com.example.doublem.MainActivity
 import com.example.doublem.R
 import com.example.doublem.composants.bluetooth.BluetoothInteractionHandler
@@ -44,16 +55,17 @@ import com.example.doublem.composants.hid.HidEntryViewModel
 import com.example.doublem.data.AppViewModelProvider
 import com.example.doublem.data.hid.Hid
 import kotlinx.coroutines.launch
+import java.io.File
 
 // Usefull
 @Composable
 fun AppElementClickable(
     appItem: Hid,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    bluetoothInteractionHandler: BluetoothInteractionHandler
+    modifier: Modifier = Modifier
 ) {
     var showDialog by remember { mutableStateOf(false) }
+
     val context = LocalContext.current
 
     // Gestion des clics et maintiens appuyés
@@ -82,8 +94,29 @@ fun AppElementClickable(
         modifier = gestureModifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        Image(
-            painter = painterResource(R.drawable.ab2_quick_yoga),
+//        Image(
+//            painter = rememberAsyncImagePainter(appItem.imageUri.toUri()),
+//            contentDescription = appItem.name,
+//            contentScale = ContentScale.Crop,
+//            modifier = Modifier
+//                .size(54.dp)
+//                .clip(CircleShape)
+//        )
+
+//        Image(
+//            rememberAsyncImagePainter(model = appItem.imageUri),
+//            contentDescription = appItem.name,
+//            contentScale = ContentScale.Crop,
+//            modifier = Modifier
+//                .size(54.dp)
+//                .clip(CircleShape)
+//        )
+
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(appItem.imageUri)
+                .placeholder(R.drawable.ic_launcher_background)
+                .build(),
             contentDescription = appItem.name,
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -172,7 +205,7 @@ fun AppListWithDAO(
 
             AppElementClickable(hid, onClick = {
                 onClickImage(hid.name, bluetoothInteractionHandler)
-            }, bluetoothInteractionHandler = bluetoothInteractionHandler)
+            })
         }
     }
 }
