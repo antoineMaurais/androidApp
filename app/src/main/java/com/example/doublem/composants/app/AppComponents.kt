@@ -114,8 +114,9 @@ fun AppElementClickable(
 
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(appItem.imageUri)
-                .placeholder(R.drawable.ic_launcher_background)
+                .data(R.drawable.ic_launcher_foreground)
+//                .data(appItem.imageUri) // appItem.imageUri not working so for now it will be a default image
+                .placeholder(R.drawable.ic_launcher_foreground)
                 .build(),
             contentDescription = appItem.name,
             contentScale = ContentScale.Crop,
